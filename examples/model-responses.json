@@ -1,0 +1,14 @@
+{
+  "hot": {
+    "state": "hot"
+  },
+  "warm": {
+    "state": "warm"
+  },
+  "cold": {
+    "state": "cold"
+  },
+  "unknown": {
+    "state": "other"
+  }
+}
