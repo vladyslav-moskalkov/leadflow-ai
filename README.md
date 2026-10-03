@@ -1,5 +1,7 @@
 # LeadFlow AI
 
+[![Validate demonstration](https://github.com/vladyslav-moskalkov/leadflow-ai/actions/workflows/validate.yml/badge.svg)](https://github.com/vladyslav-moskalkov/leadflow-ai/actions/workflows/validate.yml)
+
 **Form-to-CRM lead intake and AI-assisted marketing segmentation, built with n8n and `gpt-5-mini`.**
 
 LeadFlow connects a landing-page form with Google Sheets, Telegram, Zoho CRM and Klaviyo. It maps a request into shared fields, creates a CRM lead, notifies the team and uses an AI classification to select a Hot, Warm or Cold marketing list.
