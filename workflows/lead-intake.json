@@ -1,0 +1,887 @@
+{
+  "name": "LeadFlow AI — Form Intake and Lead Qualification",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "leadflow-demo",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "ec36c120-65c0-470e-ae92-9e062e448e11",
+      "name": "Webhook"
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $json.body ?? {};\n\nreturn [\n  {\n    json: {\n      name: body.name,\n      contact: body.contact,\n      email: body.email,\n      businessDescription: body.business_description,\n      automationGoals: body.automation_goals\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        0
+      ],
+      "id": "d45a1cd8-8898-4244-80c7-f4a469b69692",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2c2c1ab0-cf0a-49cd-a6cb-2902488cf75c",
+              "name": "name",
+              "value": "={{ $json.name }}",
+              "type": "string"
+            },
+            {
+              "id": "3c5bde41-1316-410c-a79a-f34b12723305",
+              "name": "contact",
+              "value": "={{ $json.contact }}",
+              "type": "string"
+            },
+            {
+              "id": "9dcb816d-117f-4884-9b2c-cc1a5ce5fee2",
+              "name": "email",
+              "value": "={{ $json.email }}",
+              "type": "string"
+            },
+            {
+              "id": "ed0733e0-0a08-4cd4-be25-c5131cee89de",
+              "name": "business Description",
+              "value": "={{ $json.businessDescription }}",
+              "type": "string"
+            },
+            {
+              "id": "f23a67b9-1b76-4ac7-b06b-86d3d10bc499",
+              "name": "automation Goals",
+              "value": "={{ $json.automationGoals }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        448,
+        0
+      ],
+      "id": "f9a07515-d78f-47c9-ab4d-f21a7def6725",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "REPLACE_WITH_SPREADSHEET_ID"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Leads"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "created at": "={{ $now.toFormat(\"dd.MM.yyyy HH:mm:ss\") }}",
+            "name": "={{ $json.name }}",
+            "contact": "={{ $json.contact }}",
+            "email": "={{ $json.email }}",
+            "business Description": "={{ $json['business Description'] }}",
+            "automation Goals": "={{ $json['automation Goals'] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "created at",
+              "displayName": "created at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "contact",
+              "displayName": "contact",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "business Description",
+              "displayName": "business Description",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "automation Goals",
+              "displayName": "automation Goals",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        736,
+        -192
+      ],
+      "id": "9609c98e-a5c9-4aa1-acbe-9a406b79f8f6",
+      "name": "Append row in sheet"
+    },
+    {
+      "parameters": {
+        "jsCode": "const name = $json.name;\nconst contact = $json.contact;\nconst email = $json.email;\nconst businessDescription = $json[\"business Description\"];\nconst automationGoals = $json[\"automation Goals\"];\n\nconst message = `\n🚀 New Lead — SYNTRA Labs\n\n────────────────────\n\n👤 Name\n${name}\n\n📱 Contact\n${contact}\n\n📧 Email\n${email}\n\n🏢 Business\n${businessDescription}\n\n⚙️ Automation Goals\n${automationGoals}\n\n────────────────────\n\n🔥 Status: New Lead\n`;\n\nreturn [\n  {\n    json: {\n      text: message,\n    },\n  },\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        736,
+        0
+      ],
+      "id": "6a56ca19-0053-48b3-8f05-73b59f8cb4d7",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "chatId": "REPLACE_WITH_TELEGRAM_CHAT_ID",
+        "text": "={{ $json.text }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1024,
+        0
+      ],
+      "id": "bcb01945-0871-430b-911e-29849490a96d",
+      "name": "Send a text message"
+    },
+    {
+      "parameters": {
+        "resource": "lead",
+        "Company": "syntra labs",
+        "lastName": "={{ $json.name }}",
+        "additionalFields": {
+          "Description": "={{ $json['business Description'] }}",
+          "Email": "={{ $json.email }}",
+          "First_Name": "={{ $json.name }}",
+          "Phone": "={{ $json.contact }}"
+        }
+      },
+      "type": "n8n-nodes-base.zohoCrm",
+      "typeVersion": 1,
+      "position": [
+        736,
+        192
+      ],
+      "id": "04568d78-3e62-406c-a665-7ebe8ece804d",
+      "name": "Create a lead"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        752,
+        720
+      ],
+      "id": "31e1ad01-db72-4af1-841f-2076cf1d2797",
+      "name": "OpenAI Chat Model"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Ти — AI-асистент з кваліфікації лідів для студії автоматизації бізнесу SYNTRA Labs.\nТвоє завдання — проаналізувати опис бізнесу клієнта та його цілі автоматизації, щоб визначити стан ліда.\n\nДані клієнта:\n- Опис бізнесу: {{ $json['business Description'] }}\n- Цілі автоматизації: {{ $json['automation Goals']\n}}\n\nЛід може бути в одному із трьох станів:\n1. hot (гарячий) — клієнт чітко знає, що хоче автоматизувати (наприклад: \"інтегрувати CRM з Telegram\", \"налаштувати AI-підтримку\", \"переносити замовлення в таблицю\"). Він описує реальний бізнес, команду або конкретний біль у процесах.\n2. warm (теплий) — клієнт описує свій бізнес, але має загальні або розмиті цілі (наприклад: \"хочу спробувати ШІ\", \"потрібна консультація\", \"хочу оптимізувати роботу\"), або хоче дізнатися ціни без конкретного завдання.\n3. cold (холодний) — у полях вказано несерйозний опис, тестові дані (наприклад: \"тест\", \"12345\", \"привіт\"), або поля опису та цілей залишені абсолютно пустими.\n\nПовертай відповідь завжди строго у форматі JSON (без зайвих слів чи оформлення), зразок: \n\n{\n  \"state\": \"hot|warm|cold\"\n}",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        672,
+        496
+      ],
+      "id": "16a8b6bd-0f77-426e-8225-f42bb84edfd1",
+      "name": "Lead Qualifier"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "82880aa3-7f3b-40f0-9270-3faeb537ae3b",
+              "name": "state",
+              "value": "={{ $json.state }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1248,
+        496
+      ],
+      "id": "384d90f3-4ba4-40b6-bc43-d3dfcbf34434",
+      "name": "Qualified Customer State"
+    },
+    {
+      "parameters": {
+        "jsCode": "const text = $input.item.json.text;\n\nconst parsed = JSON.parse(text);\n\nreturn {\n  json: parsed\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1024,
+        496
+      ],
+      "id": "e4475757-50ee-40e8-a3b9-acc30bc8cd39",
+      "name": "Parse LLM JSON"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "8c4128fe-6fd4-4f25-82d5-befbb081b202",
+              "leftValue": "={{ $json.state }}",
+              "rightValue": "warm",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "300e5d27-b88b-40fb-8986-fa261980ed7d",
+              "leftValue": "={{ $json.state }}",
+              "rightValue": "cold",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "b89ebbb5-7bf0-428f-b2ec-9a748066c062",
+              "leftValue": "={{ $json.state }}",
+              "rightValue": "hot",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1472,
+        496
+      ],
+      "id": "048f7bbb-31f4-4c84-9a8a-cb507bc80190",
+      "name": "If unknown state"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "defe059e-e544-4a31-aa31-8ec437afead3",
+              "name": "state",
+              "value": "cold",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1696,
+        416
+      ],
+      "id": "c79a506f-f7a4-43c8-a2bc-60fcb4ae64d9",
+      "name": "Fixed Customer State"
+    },
+    {
+      "parameters": {
+        "content": "## Klaviyo list configuration\nReplace the Hot, Warm and Cold list placeholders with your own test lists before running the demonstration.",
+        "height": 208,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1632,
+        608
+      ],
+      "typeVersion": 1,
+      "id": "4a5d6dd9-8fcd-4686-83ff-929051351d4e",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.state }}",
+                    "rightValue": "warm",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "4163ffe2-415c-4934-9b30-9400e46a8e3f"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "warm"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "71b3ed20-3933-404a-8c39-437cf0efcb0f",
+                    "leftValue": "={{ $json.state }}",
+                    "rightValue": "hot",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "hot"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "d2778042-6857-4fa6-bf3c-813aa2373d37",
+                    "leftValue": "={{ $json.state }}",
+                    "rightValue": "cold",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "cold"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        1920,
+        480
+      ],
+      "id": "a45f7d8d-0b59-41fe-a1c8-c59144eff1e7",
+      "name": "Switch State"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b77e9205-6edb-4b89-8f6e-882d35b87b20",
+              "name": "id",
+              "value": "REPLACE_WITH_WARM_LIST_ID",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2144,
+        208
+      ],
+      "id": "c284ecbf-4fe9-40da-8f6e-d2966e06a0f0",
+      "name": "warm list id"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "90a48b80-b7c6-4138-be4a-7b53eed0c00c",
+              "name": "id",
+              "value": "REPLACE_WITH_HOT_LIST_ID",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2144,
+        400
+      ],
+      "id": "7bbe6ce3-559d-476b-9554-f68cfd503e12",
+      "name": "hot list id"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "28bdff24-593b-44e1-b5f6-36b334c708e7",
+              "name": "id",
+              "value": "REPLACE_WITH_COLD_LIST_ID",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2144,
+        592
+      ],
+      "id": "12f92e0b-07b4-4417-a991-4845bad2f776",
+      "name": "cold list id"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "dcf4c215-4960-4132-8d6c-5879b27e0cd4",
+              "name": "id",
+              "value": "={{ $json.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2368,
+        400
+      ],
+      "id": "d44ea7d0-81d7-46b0-8a21-5994024648d2",
+      "name": "list id"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://a.klaviyo.com/api/profile-import",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "revision",
+              "value": "2026-04-15"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"data\": {\n    \"type\": \"profile\",\n    \"attributes\": {\n      \"email\": \"{{ $('Edit Fields').item.json.email }}\",\n      \"phone_number\": \"{{ $('Edit Fields').item.json.contact }}\"\n    }\n  }\n} ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        2576,
+        400
+      ],
+      "id": "ec6ca87f-753a-4dc4-8a46-d5d08457c581",
+      "name": "Create or Update Profile"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "ec0d7924-f5cf-491a-a0aa-24ce892de821",
+              "name": "data",
+              "value": "={{JSON.parse($json.data).data.id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2784,
+        400
+      ],
+      "id": "c482ab44-99ca-4a17-ba03-088500265799",
+      "name": "parse profile id"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://a.klaviyo.com/api/lists/{{ $('list id').item.json.id }}/relationships/profiles ",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "revision",
+              "value": "2026-04-15"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"data\": [\n    {\n      \"type\": \"profile\",\n      \"id\": \"{{ $json.data }}\"\n    }\n  ]\n} ",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        2992,
+        400
+      ],
+      "id": "5ef6dff1-f9b5-45ff-9ee2-ffa50603f86a",
+      "name": "Add profile to list"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Create a lead",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Lead Qualifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a lead": {
+      "main": [
+        []
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Lead Qualifier",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lead Qualifier": {
+      "main": [
+        [
+          {
+            "node": "Parse LLM JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse LLM JSON": {
+      "main": [
+        [
+          {
+            "node": "Qualified Customer State",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Qualified Customer State": {
+      "main": [
+        [
+          {
+            "node": "If unknown state",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If unknown state": {
+      "main": [
+        [
+          {
+            "node": "Fixed Customer State",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Switch State",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fixed Customer State": {
+      "main": [
+        [
+          {
+            "node": "Switch State",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch State": {
+      "main": [
+        [
+          {
+            "node": "warm list id",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "hot list id",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "cold list id",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "cold list id": {
+      "main": [
+        [
+          {
+            "node": "list id",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "hot list id": {
+      "main": [
+        [
+          {
+            "node": "list id",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "warm list id": {
+      "main": [
+        [
+          {
+            "node": "list id",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "list id": {
+      "main": [
+        [
+          {
+            "node": "Create or Update Profile",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create or Update Profile": {
+      "main": [
+        [
+          {
+            "node": "parse profile id",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "parse profile id": {
+      "main": [
+        [
+          {
+            "node": "Add profile to list",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  }
+}
