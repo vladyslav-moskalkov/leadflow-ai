@@ -1,0 +1,13 @@
+{
+  "name": "leadflow-ai",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Offline checks for the sanitized LeadFlow AI n8n demonstration",
+  "scripts": {
+    "test": "node --test tests/*.test.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
